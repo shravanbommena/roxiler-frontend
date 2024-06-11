@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from "react";
 import TransactionsTable from "./components/TransactionsTable";
 import Statistics from "./components/Statistics";

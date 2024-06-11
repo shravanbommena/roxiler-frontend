@@ -1,63 +1,38 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const TransactionsTable = ({ month }) => {
-  const [transactions, setTransactions] = useState([]);
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
+const Statistics = ({ month }) => {
+  const [stats, setStats] = useState({
+    totalSaleAmount: 0,
+    totalSoldItems: 0,
+    totalNotSoldItems: 0,
+  });
 
   useEffect(() => {
-    fetchData();
-  }, [month, search, page]);
-
-  const fetchData = async () => {
-    const response = await axios.get(
-      `https://roxiler-backend-i7kg.onrender.com/api/transactions`,
-      {
-        params: { month, search, page },
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://roxiler-backend-i7kg.onrender.com/api/statistics",
+          {
+            params: { month },
+          }
+        );
+        setStats(response.data);
+      } catch (error) {
+        console.error("Error fetching statistics:", error);
       }
-    );
-    setTransactions(response.data);
-  };
+    };
+
+    fetchData();
+  }, [month]);
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Category</th>
-            <th>Date Of Sale</th>
-            <th>Sold</th>
-          </tr>
-        </thead>
-        <tbody>
-          {transactions.map((transaction) => (
-            <tr key={transaction._id}>
-              <td>{transaction.title}</td>
-              <td>{transaction.description}</td>
-              <td>{transaction.price}</td>
-              <td>{transaction.category}</td>
-              <td>{transaction.dateOfSale}</td>
-              <td>{transaction.sold ? "Yes" : "No"}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={() => setPage((page) => Math.max(page - 1, 1))}>
-        Previous
-      </button>
-      <button onClick={() => setPage((page) => page + 1)}>Next</button>
+      <div>Total Sale Amount: {stats.totalSaleAmount}</div>
+      <div>Total Sold Items: {stats.totalSoldItems}</div>
+      <div>Total Not Sold Items: {stats.totalNotSoldItems}</div>
     </div>
   );
 };
 
-export default TransactionsTable;
+export default Statistics;

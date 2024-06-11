@@ -9,18 +9,22 @@ const PieChart = ({ month }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetchData();
-  }, [month]);
-
-  const fetchData = async () => {
-    const response = await axios.get(
-      `https://roxiler-backend-i7kg.onrender.com/api/pie-chart`,
-      {
-        params: { month },
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://roxiler-backend-i7kg.onrender.com/api/pie-chart`,
+          {
+            params: { month },
+          }
+        );
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching pie chart data:", error);
       }
-    );
-    setData(response.data);
-  };
+    };
+
+    fetchData();
+  }, [month]); // Add 'fetchData' to the dependency array
 
   const chartData = {
     labels: data.map((d) => d.category),

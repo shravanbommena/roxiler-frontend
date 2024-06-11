@@ -5,26 +5,31 @@ const TransactionsTable = ({ month }) => {
   const [transactions, setTransactions] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [perPage] = useState(10);
 
   useEffect(() => {
-    fetchData();
-  }, [month, search, page]);
-
-  const fetchData = async () => {
-    const response = await axios.get(
-      `https://roxiler-backend-i7kg.onrender.com/api/transactions`,
-      {
-        params: { month, search, page },
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://roxiler-backend-i7kg.onrender.com/api/transactions",
+          {
+            params: { month, search, page, perPage },
+          }
+        );
+        setTransactions(response.data);
+      } catch (error) {
+        console.error("Error fetching transactions:", error);
       }
-    );
-    setTransactions(response.data);
-  };
+    };
+
+    fetchData();
+  }, [month, search, page, perPage]);
 
   return (
     <div>
       <input
         type="text"
-        placeholder="Search"
+        placeholder="Search..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -35,7 +40,7 @@ const TransactionsTable = ({ month }) => {
             <th>Description</th>
             <th>Price</th>
             <th>Category</th>
-            <th>Date Of Sale</th>
+            <th>Date of Sale</th>
             <th>Sold</th>
           </tr>
         </thead>
@@ -46,16 +51,16 @@ const TransactionsTable = ({ month }) => {
               <td>{transaction.description}</td>
               <td>{transaction.price}</td>
               <td>{transaction.category}</td>
-              <td>{transaction.dateOfSale}</td>
+              <td>{new Date(transaction.dateOfSale).toLocaleDateString()}</td>
               <td>{transaction.sold ? "Yes" : "No"}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <button onClick={() => setPage((page) => Math.max(page - 1, 1))}>
+      <button onClick={() => setPage((prev) => Math.max(prev - 1, 1))}>
         Previous
       </button>
-      <button onClick={() => setPage((page) => page + 1)}>Next</button>
+      <button onClick={() => setPage((prev) => prev + 1)}>Next</button>
     </div>
   );
 };
