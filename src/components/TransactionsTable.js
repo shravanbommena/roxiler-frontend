@@ -11,9 +11,12 @@ const TransactionsTable = ({ month }) => {
   }, [month, search, page]);
 
   const fetchData = async () => {
-    const response = await axios.get(`http://localhost:5000/api/transactions`, {
-      params: { month, search, page },
-    });
+    const response = await axios.get(
+      `https://roxiler-backend-i7kg.onrender.com/api/transactions`,
+      {
+        params: { month, search, page },
+      }
+    );
     setTransactions(response.data);
   };
 
